@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "Business": {
+      "title": "Business",
+      "description": "Tenant business organization account",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique business identifier" },
+        "name": { "type": "string", "maxLength": 100, "description": "Business or center name" },
+        "category": { "type": "string", "enum": ["gym", "tuition", "academy", "yoga", "dance", "sports"], "description": "Business industry category" },
+        "ownerId": { "type": "string", "maxLength": 128, "description": "UID of the owner" },
+        "ownerEmail": { "type": "string", "maxLength": 100, "description": "Email of the business owner" },
+        "phone": { "type": "string", "maxLength": 20, "description": "Contact phone number" },
+        "address": { "type": "string", "maxLength": 200, "description": "Physical address" },
+        "currency": { "type": "string", "maxLength": 10, "description": "Currency code like INR, USD" },
+        "subscriptionPlan": { "type": "string", "enum": ["trial", "starter", "growth", "pro"], "description": "SaaS platform plan" },
+        "status": { "type": "string", "enum": ["active", "trial", "suspended"], "description": "Tenant status" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Last update timestamp" }
+      },
+      "required": ["id", "name", "category", "ownerId", "ownerEmail", "status"]
+    },
+    "BusinessMembership": {
+      "title": "BusinessMembership",
+      "description": "User-to-business tenant membership and RBAC role mapping",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Membership ID composite" },
+        "businessId": { "type": "string", "description": "Business ID" },
+        "userId": { "type": "string", "description": "User UID" },
+        "email": { "type": "string", "description": "User email" },
+        "role": { "type": "string", "enum": ["owner", "staff", "member"], "description": "Role in the tenant" },
+        "permissions": { "type": "array", "description": "Staff access permissions list" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" }
+      },
+      "required": ["id", "businessId", "userId", "role"]
+    },
+    "Branch": {
+      "title": "Branch",
+      "description": "Branch location for a business",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Branch ID" },
+        "businessId": { "type": "string", "description": "Parent business ID" },
+        "name": { "type": "string", "maxLength": 100, "description": "Branch name" },
+        "isPrimary": { "type": "boolean", "description": "Is primary main branch" },
+        "address": { "type": "string", "maxLength": 200, "description": "Branch address" },
+        "phone": { "type": "string", "maxLength": 20, "description": "Branch contact phone" }
+      },
+      "required": ["id", "businessId", "name"]
+    },
+    "Member": {
+      "title": "Member",
+      "description": "Member or student enrolled in the tenant business",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Member unique ID" },
+        "businessId": { "type": "string", "description": "Tenant business ID" },
+        "memberCode": { "type": "string", "maxLength": 30, "description": "Sequential or formatted ID code" },
+        "fullName": { "type": "string", "maxLength": 100, "description": "Full name" },
+        "phone": { "type": "string", "maxLength": 20, "description": "Primary phone" },
+        "email": { "type": "string", "maxLength": 100, "description": "Email address" },
+        "status": { "type": "string", "enum": ["active", "inactive", "expired", "pending"], "description": "Membership status" },
+        "joinDate": { "type": "string", "description": "Joining date string YYYY-MM-DD" },
+        "photoUrl": { "type": "string", "maxLength": 500, "description": "Avatar or photo URL" },
+        "planId": { "type": "string", "description": "Assigned plan ID" },
+        "planName": { "type": "string", "description": "Assigned plan name" },
+        "planEndDate": { "type": "string", "description": "Plan expiry date" },
+        "notes": { "type": "string", "maxLength": 500, "description": "Staff notes" },
+        "emergencyContact": { "type": "string", "maxLength": 50, "description": "Emergency contact name/phone" },
+        "createdAt": { "type": "string", "description": "Creation timestamp" },
+        "updatedAt": { "type": "string", "description": "Update timestamp" }
+      },
+      "required": ["id", "businessId", "memberCode", "fullName", "phone", "status", "joinDate"]
+    },
+    "MembershipPlan": {
+      "title": "MembershipPlan",
+      "description": "Membership package or course subscription plan",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Plan ID" },
+        "businessId": { "type": "string", "description": "Tenant business ID" },
+        "name": { "type": "string", "maxLength": 100, "description": "Plan name" },
+        "durationMonths": { "type": "number", "description": "Duration in months" },
+        "price": { "type": "number", "description": "Price in tenant currency" },
+        "description": { "type": "string", "maxLength": 300, "description": "Plan details and perks" },
+        "isActive": { "type": "boolean", "description": "Whether plan is active" }
+      },
+      "required": ["id", "businessId", "name", "durationMonths", "price"]
+    },
+    "Attendance": {
+      "title": "Attendance",
+      "description": "Daily check-in record for member",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Attendance record ID" },
+        "businessId": { "type": "string", "description": "Tenant business ID" },
+        "memberId": { "type": "string", "description": "Referenced member ID" },
+        "memberName": { "type": "string", "description": "Cached member name" },
+        "memberCode": { "type": "string", "description": "Member identification code" },
+        "date": { "type": "string", "description": "Date format YYYY-MM-DD" },
+        "timestamp": { "type": "string", "description": "Check-in time" },
+        "method": { "type": "string", "enum": ["qr", "manual"], "description": "Method of check-in" },
+        "verifiedBy": { "type": "string", "description": "Staff name or 'self-qr'" }
+      },
+      "required": ["id", "businessId", "memberId", "date", "method"]
+    },
+    "Invoice": {
+      "title": "Invoice",
+      "description": "Fee invoice or billing statement",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Invoice ID" },
+        "businessId": { "type": "string", "description": "Tenant business ID" },
+        "invoiceNumber": { "type": "string", "description": "Formatted invoice number" },
+        "memberId": { "type": "string", "description": "Member ID" },
+        "memberName": { "type": "string", "description": "Member name" },
+        "amount": { "type": "number", "description": "Total invoice amount" },
+        "paidAmount": { "type": "number", "description": "Amount already paid" },
+        "balance": { "type": "number", "description": "Remaining unpaid balance" },
+        "status": { "type": "string", "enum": ["paid", "partial", "unpaid"], "description": "Payment status" },
+        "dueDate": { "type": "string", "description": "Payment due date" },
+        "description": { "type": "string", "description": "Invoice description" },
+        "createdAt": { "type": "string", "description": "Created at" }
+      },
+      "required": ["id", "businessId", "invoiceNumber", "memberId", "amount", "status"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "description": "Payment transaction record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Payment ID" },
+        "businessId": { "type": "string", "description": "Tenant business ID" },
+        "invoiceId": { "type": "string", "description": "Invoice ID" },
+        "memberId": { "type": "string", "description": "Member ID" },
+        "amount": { "type": "number", "description": "Amount paid" },
+        "paymentMethod": { "type": "string", "enum": ["cash", "upi", "card", "online", "bank_transfer"], "description": "Payment mode" },
+        "referenceNo": { "type": "string", "description": "UPI/transaction reference or receipt number" },
+        "date": { "type": "string", "description": "Payment date" }
+      },
+      "required": ["id", "businessId", "invoiceId", "memberId", "amount", "paymentMethod", "date"]
+    }
+  },
+  "firestore": {
+    "/businesses/{businessId}": {
+      "schema": "Business",
+      "description": "Tenant business profile and subscription info"
+    },
+    "/business_memberships/{membershipId}": {
+      "schema": "BusinessMembership",
+      "description": "Tenant RBAC mapping linking users to businesses"
+    },
+    "/businesses/{businessId}/branches/{branchId}": {
+      "schema": "Branch",
+      "description": "Branches belonging to business"
+    },
+    "/businesses/{businessId}/members/{memberId}": {
+      "schema": "Member",
+      "description": "Members enrolled in the business"
+    },
+    "/businesses/{businessId}/plans/{planId}": {
+      "schema": "MembershipPlan",
+      "description": "Membership packages or courses offered by business"
+    },
+    "/businesses/{businessId}/attendance/{attendanceId}": {
+      "schema": "Attendance",
+      "description": "Attendance logs per tenant"
+    },
+    "/businesses/{businessId}/invoices/{invoiceId}": {
+      "schema": "Invoice",
+      "description": "Invoices generated for members"
+    },
+    "/businesses/{businessId}/payments/{paymentId}": {
+      "schema": "Payment",
+      "description": "Payments collected by business"
+    }
+  }
+}

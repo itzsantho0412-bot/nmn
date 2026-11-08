@@ -1,0 +1,6 @@
+{
+  "name": "Universal Business SaaS - Gym & Institute Management",
+  "description": "Multi-tenant SaaS platform for gyms, fitness clubs, and coaching institutes with member tracking, attendance, billing, and role-based security.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
